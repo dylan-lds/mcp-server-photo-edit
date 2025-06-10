@@ -49,6 +49,30 @@ def photo_edit_tool(imagePath: str, textLines: list[TextInfo]):
     return f"处理后的图片已保存至: {output_path}"
 
 
+def get_font_size(text: str, max_width: float, max_height: float, font_path: str) -> ImageFont.FreeTypeFont:
+    """
+    二分查找合适的字体大小
+    """
+    size_min = 1
+    size_max = 100
+    font = None
+    target_font = None
+    
+    while size_min <= size_max:
+        size = (size_min + size_max) // 2
+        font = ImageFont.truetype(font_path, size)
+        text_bbox = font.getbbox(text)
+        text_width = text_bbox[2] - text_bbox[0]
+        text_height = text_bbox[3] - text_bbox[1]
+        
+        if text_width <= max_width and text_height <= max_height:
+            target_font = font
+            size_min = size + 1
+        else:
+            size_max = size - 1
+    
+    return target_font or ImageFont.truetype(font_path, 1)
+
 def draw_text_on_image(image_path: str, textLines: list[TextInfo], output_path=None):
     print(f"即将处理请求: {textLines}")
     """
@@ -62,11 +86,7 @@ def draw_text_on_image(image_path: str, textLines: list[TextInfo], output_path=N
     image = Image.open(image_path)
     draw = ImageDraw.Draw(image)
     
-    # 尝试加载字体，如果没有则使用默认字体
-    try:
-        font = ImageFont.truetype("arial.ttf", 20)  # Windows系统通常会有arial字体
-    except IOError:
-        font = ImageFont.load_default()
+    font_path = "NotoSansMonoCJK-VF.otf"
 
     # 遍历OCR结果中的每个文本区域
     if textLines:
@@ -75,6 +95,12 @@ def draw_text_on_image(image_path: str, textLines: list[TextInfo], output_path=N
             bbox = []
             for point in line.boundingPolygon:
                 bbox.extend([point.x, point.y])
+            
+            # 计算文本框的尺寸
+            x_coords = bbox[::2]  # 所有x坐标
+            y_coords = bbox[1::2]  # 所有y坐标
+            width = max(x_coords) - min(x_coords)
+            height = max(y_coords) - min(y_coords)
             
             # 计算文本框的中心点
             x1, y1 = bbox[0], bbox[1]  # 左上角
@@ -92,8 +118,15 @@ def draw_text_on_image(image_path: str, textLines: list[TextInfo], output_path=N
             
             # 使用新的文本内容
             text = line.text
+            
+            # 获取适合边界框的字体大小
+            try:
+                font = get_font_size(text, width * 0.9, height * 0.9, font_path)  # 留出10%的边距
+            except IOError:
+                font = ImageFont.load_default()
+                
             # 获取文本大小以居中显示
-            text_bbox = draw.textbbox((0, 0), text, font=font)
+            text_bbox = font.getbbox(text)
             text_width = text_bbox[2] - text_bbox[0]
             text_height = text_bbox[3] - text_bbox[1]
             
@@ -103,6 +136,7 @@ def draw_text_on_image(image_path: str, textLines: list[TextInfo], output_path=N
             
             # 绘制文本
             draw.text((text_x, text_y), text, fill='black', font=font)
+
     # 如果没有指定输出路径，则在原文件名后添加_output
     if output_path is None:
         file_name, file_ext = os.path.splitext(image_path)

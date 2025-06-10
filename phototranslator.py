@@ -90,17 +90,17 @@ def translate_image(request: PhotoTranslationRequest):
         }
 
 if __name__ == "__main__":
-    # # 测试图片翻译功能
-    # test_request = PhotoTranslationRequest(
-    #     imagePath="C:\\Users\\Think\\Desktop\\lab_mt.jpg",
-    #     to_language="en"
-    # )
-    # print("正在测试图片翻译功能...")
-    # print(f"测试图片路径: {test_request.imagePath}")
+    # 测试图片翻译功能
+    test_request = PhotoTranslationRequest(
+        imagePath="/Users/liudashuai/workspace/mt.jpg",
+        to_language="en"
+    )
+    print("正在测试图片翻译功能...")
+    print(f"测试图片路径: {test_request.imagePath}")
     
-    # result = translate_image(test_request)
-    # print("\n翻译结果:")
-    # print(json.dumps(result, ensure_ascii=False, indent=2))
+    result = translate_image(test_request)
+    print("\n翻译结果:")
+    print(json.dumps(result, ensure_ascii=False, indent=2))
     
     # 启动服务器
     app.settings.streamable_http_path = "/stream"
