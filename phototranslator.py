@@ -4,7 +4,7 @@ from typing import List, Optional
 import json
 from ocr import ocr_image, OCRRequest
 from translator import translate_text, TranslationRequest
-from photoedit import photo_edit_tool, TextInfo, PositionInfo
+from photoeditCV import photo_edit_tool, TextInfo, PositionInfo
 
 class PhotoTranslationRequest(BaseModel):
     """图片翻译请求模型"""
