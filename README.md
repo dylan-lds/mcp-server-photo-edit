@@ -5,9 +5,7 @@ ps:以上服务需要使用Azure国际版
 https://www.cherry-ai.com/download
 2.安装python环境(本人安装的版本为Python 3.12.3)，参考如下地址安装：
 https://blog.csdn.net/sensen_kiss/article/details/141940274
-3.用 VS code 打开 mcp-server-photo-edit 项目，该项目在本文件统计目录下，同时已上传到github，地址如下：
-https://github.com/dylan-lds/mcp-server-photo-edit.git
-Repo访问需要申请权限，请联系15254118710@163.com。
+3.用 VS code 打开 mcp-server-photo-edit 项目
 4.替换环境变量。打开 mcp-server-photo-edit 根目录下的 .env 文件，将 Azure computer Vision 信息以及 Azure Translator 信息替换成自己的。
 获取 Azure computer Vision 以及 Azure Translator 信息的方法请参考Azure官网链接。
 5.启动mcp服务。在 mcp-server-photo-edit 根目录下执行 python3 phototranslator.py 命令即可。
